@@ -1,0 +1,293 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:myproject/actions/cipher_affine.dart';
+import 'package:myproject/actions/provider_help.dart';
+import 'package:myproject/const.dart';
+import 'package:provider/provider.dart';
+  
+class CipherHome extends StatelessWidget {
+  String? plaintext, ciphertext;
+  String? usertext;
+  int m, k;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: kBackgroundColor,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            //crossAxisAlignment: CrossAxisAlignment.end,
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 25),
+              Text(
+                "سيفرآب",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: kEncipherColor,
+                ),
+                //textDirection: TextDecoration.underline,
+              ),
+              Container(
+                width: 60,
+                height: 30,
+                child: Text('ــــــــــــــــــ'),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              //InputKeyWidget(),
+              
+              buildInputKeys( m, k),
+              SizedBox(height: 20),
+              TextField(
+                maxLines: 3,
+                keyboardType: TextInputType.multiline,
+                decoration: InputDecoration(
+                  labelText: "نص التشفير أو نص فك التشفير",
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (_usertext) {
+                  usertext = _usertext.toString();
+                },
+                //decoration: InputDecoration.collapsed(
+                //  hintText: "hintText hintText hintText"),
+              ),
+              BtnsWidget(),
+              TextField(
+                maxLines: 7,
+                keyboardType: TextInputType.multiline,
+                decoration: InputDecoration(
+                  labelText: "النتيجة",
+                  border: OutlineInputBorder(),
+                ),
+                readOnly: true,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class BtnsWidget extends StatelessWidget {
+  int m, k;
+  String plaintext;
+  BtnsWidget({ required this.m,  required this.k, required this.plaintext);
+  @override
+  Widget build(BuildContext context) {
+    final cipherPro = Provider.of<CipherProvider>(context);
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 30),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              child: Text("تشفير"),
+              onPressed: () {
+                encipher(2, 5, 'ab');
+                cipherPro.runEncipher(m, k, plaintext);
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: kEncipherColor,
+              ),
+            ),
+          ),
+          SizedBox(width: 20),
+          Expanded(
+            child: ElevatedButton(
+              child: Text("فك تشفير"),
+              onPressed: () {
+                decipher(2, 5, "ÇÉ");
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: kDecipherColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+  Row buildInputKeys(int m,int k) {
+    return Row(
+    children: [
+      Expanded(
+        child: TextField(
+          autofocus: true,
+          decoration: InputDecoration(labelText: "الرمز الأول"),
+          keyboardType: TextInputType.number,
+          maxLength: 7,
+          onChanged: (newKey) => k = int.parse(newKey),
+        ),
+      ),
+      Expanded(
+        child: TextField(
+          decoration: InputDecoration(labelText: "الرمز الثاني"),
+          keyboardType: TextInputType.number,
+          maxLength: 3,
+          onChanged: (newM) => m = int.parse(newM),
+        ),
+      ),
+    ],
+  );
+  }
+
+
+
+// ===================================================================
+
+// ignore_for_file: prefer_const_constructors
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:myproject/actions/cipher_affine.dart';
+import 'package:myproject/actions/provider_help.dart';
+import 'package:myproject/const.dart';
+import 'package:provider/provider.dart';
+
+class CipherHome extends StatelessWidget {
+  String? plaintext, ciphertext;
+  late String usertext;
+  late int m, k;
+  @override
+  Widget build(BuildContext context) {
+    final cipherPro = Provider.of<CipherProvider>(context);
+    return Scaffold(
+      backgroundColor: kBackgroundColor,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            //crossAxisAlignment: CrossAxisAlignment.end,
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 25),
+              Text(
+                "سيفرآب",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: kEncipherColor,
+                ),
+                //textDirection: TextDecoration.underline,
+              ),
+              Container(
+                width: 60,
+                height: 30,
+                child: Text('ــــــــــــــــــ'),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              //InputKeyWidget(),
+
+              buildInputKeys(),
+              SizedBox(height: 20),
+              TextField(
+                maxLines: 3,
+                keyboardType: TextInputType.multiline,
+                decoration: InputDecoration(
+                  labelText: "نص التشفير أو نص فك التشفير",
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (_usertext) {
+                  usertext = _usertext.toString();
+                },
+                //decoration: InputDecoration.collapsed(
+                //  hintText: "hintText hintText hintText"),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 30),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        child: Text("تشفير"),
+                        onPressed: () {
+                          //encipher(2, 5, 'ab');
+                          //cipherPro.runEncipher(2, 5, 'ab');
+                          print('------------------------$k');
+                          print('------------------------$usertext');
+                          print('------------------------$m');
+                          //cipherPro.runEncipher(m, k!, usertext!);
+                          cipherPro.runEncipher(m, k, usertext);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: kEncipherColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: ElevatedButton(
+                        child: Text("فك تشفير"),
+                        onPressed: () {
+                          decipher(2, 5, "ÇÉ");
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: kDecipherColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              TextField(
+                maxLines: 7,
+                keyboardType: TextInputType.multiline,
+                decoration: InputDecoration(
+                  labelText: "النتيجة",
+                  border: OutlineInputBorder(),
+                ),
+                readOnly: true,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Row buildInputKeys() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            autofocus: true,
+            decoration: InputDecoration(labelText: "الرمز الأول"),
+            keyboardType: TextInputType.number,
+            maxLength: 7,
+            onChanged: (newKey) {
+              k = int.parse(newKey);
+              //print('------------------------$k');
+            },
+          ),
+        ),
+        Expanded(
+          child: TextField(
+            decoration: InputDecoration(labelText: "الرمز الثاني"),
+            keyboardType: TextInputType.number,
+            maxLength: 3,
+            onChanged: (newM) {
+              m = int.parse(newM);
+              //print('------------------------$m');
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
